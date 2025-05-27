@@ -14,6 +14,12 @@ This repository contains a script to generate an Anki deck for learning Toki Pon
 
 ## Usage
 
+### Option 1: Download the pre-built deck
+
+The latest version of the Anki deck is automatically built and released whenever changes are merged to the main branch. You can download the most recent deck from the [Releases](https://github.com/johnkord/toki-pona-anki/releases) page.
+
+### Option 2: Build the deck yourself
+
 1. Clone this repository:
    ```
    git clone https://github.com/johnkord/toki-pona-anki.git
