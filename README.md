@@ -8,7 +8,7 @@ This repository contains a script to generate an Anki deck for learning Toki Pon
 ## Requirements
 
 - Python 3.6 or higher
-- Required Python packages: `genanki`, `requests` (install using `pip install -r requirements.txt`)
+- Required Python packages: `genanki`, `requests`, `Pillow` (install using `pip install -r requirements.txt`)
 - Internet connection (to download the Sitelen Pona font)
 - Anki desktop application (to import the generated deck)
 
@@ -42,8 +42,8 @@ The latest version of the Anki deck is automatically built and released whenever
 
 The generated Anki deck contains two card types for each Toki Pona word:
 
-1. **Sitelen Pona to Word + Definition**: Shows the Sitelen Pona character on the front and the word with its definition on the back.
-2. **Word to Sitelen Pona + Definition**: Shows the Toki Pona word on the front and its Sitelen Pona character along with the definition on the back.
+1. **Sitelen Pona to Word + Definition**: Shows the Sitelen Pona character and image on the front and the word with its definition on the back.
+2. **Word to Sitelen Pona + Definition**: Shows the Toki Pona word on the front and its Sitelen Pona character, image, and definition on the back.
 
 ## Notes
 
@@ -51,6 +51,7 @@ The generated Anki deck contains two card types for each Toki Pona word:
   1. Download a Sitelen Pona font manually (e.g., from [Kreative Korp](https://github.com/kreativekorp/linja-pona))
   2. Install the font on your system
   3. In Anki, ensure the font is available for card templates
+- The script generates both font-based Sitelen Pona characters and image versions of each character
 - For proper display of Sitelen Pona characters in Anki, you may need to adjust the card templates to use the appropriate font.
 
 ## Credits
