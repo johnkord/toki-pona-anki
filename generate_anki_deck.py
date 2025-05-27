@@ -116,6 +116,18 @@ def download_font():
         except Exception as e:
             print(f"Failed to download font from {font_url}: {e}")
     
+    # Try to find a fallback system font for testing
+    fallback_fonts = [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/liberation/LiberationSans-Regular.ttf",
+        "/usr/share/fonts/dejavu/DejaVuSans.ttf"
+    ]
+    
+    for fallback_font in fallback_fonts:
+        if os.path.exists(fallback_font):
+            print(f"Using fallback font for testing: {fallback_font}")
+            return Path(fallback_font)
+    
     print("\nCould not download a Sitelen Pona font.")
     print("You'll need to manually add a Sitelen Pona font to your Anki collection.")
     print("Fonts can be found at: https://github.com/kreativekorp/linja-pona")
