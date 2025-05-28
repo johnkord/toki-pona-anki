@@ -48,10 +48,12 @@ The generated Anki deck contains two card types for each Toki Pona word:
 ## Notes
 
 - The script attempts to automatically download a Sitelen Pona font, but if it fails, you'll need to:
-  1. Download a Sitelen Pona font manually (e.g., from [Kreative Korp](https://github.com/kreativekorp/linja-pona))
-  2. Install the font on your system
-  3. In Anki, ensure the font is available for card templates
+  1. Download a Sitelen Pona font manually (e.g., from [Kreative Korp](https://www.kreativekorp.com/software/fonts/linjapona/))
+  2. Place it in the `fonts` directory as `linjapona.otf`
+  3. Install the font on your system
+  4. In Anki, ensure the font is available for card templates
 - The script generates both font-based Sitelen Pona characters and image versions of each character
+- Images are embedded in the Anki deck to ensure they display correctly even without the font installed
 - For proper display of Sitelen Pona characters in Anki, you may need to adjust the card templates to use the appropriate font.
 
 ## Credits
