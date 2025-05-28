@@ -37,12 +37,12 @@ TOKI_PONA_MODEL = genanki.Model(
         {
             'name': 'Sitelen Pona to Word + Definition',
             'qfmt': '<div class="sitelen-pona">{{SitelenPona}}</div><br>'
-                    '<div><img src="{{SitelenPonaImage}}" class="sitelen-image"></div>',
+                    '<div><img src="{{SitelenPonaImage}}" alt="{{Word}}" class="sitelen-image" width="180" height="180"></div>',
             'afmt': '<div class="word">{{Word}}</div><br>'
                     '<div class="type">{{Type}}</div><br>'
                     '<div class="definition">{{Definition}}</div><br>'
                     '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
-                    '<div><img src="{{SitelenPonaImage}}" class="sitelen-image"></div>',
+                    '<div><img src="{{SitelenPonaImage}}" alt="{{Word}}" class="sitelen-image" width="180" height="180"></div>',
         },
         {
             'name': 'Word to Sitelen Pona + Definition',
@@ -51,7 +51,7 @@ TOKI_PONA_MODEL = genanki.Model(
                     '<div class="type">{{Type}}</div><br>'
                     '<div class="definition">{{Definition}}</div><br>'
                     '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
-                    '<div><img src="{{SitelenPonaImage}}" class="sitelen-image"></div>',
+                    '<div><img src="{{SitelenPonaImage}}" alt="{{Word}}" class="sitelen-image" width="180" height="180"></div>',
         }
     ],
     css="""
@@ -78,9 +78,11 @@ TOKI_PONA_MODEL = genanki.Model(
             font-size: 60px;
         }
         .sitelen-image {
-            max-width: 180px;
-            max-height: 180px;
+            width: 180px;
+            height: 180px;
             margin: 10px auto;
+            display: block;
+            border: 1px solid #ddd;
         }
     """
 )
