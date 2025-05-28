@@ -101,163 +101,12 @@ def create_manual_sitelen_pona_mappings():
     return "manual"
 
 def generate_proper_sitelen_pona_image(word, size=(200, 200)):
-    """Generate proper sitelen pona images using Unicode characters or manual drawings."""
+    """Generate proper sitelen pona images using geometric designs."""
     img = Image.new('RGB', size, color='white')
     draw = ImageDraw.Draw(img)
     
-    # Sitelen pona Unicode block (U+F1900-U+F19AF) - these are private use area characters
-    # that some fonts map to sitelen pona glyphs
-    sitelen_pona_unicode = {
-        'a': '\uF1900',    # a
-        'akesi': '\uF1901', # akesi  
-        'ala': '\uF1902',   # ala
-        'alasa': '\uF1903', # alasa
-        'ale': '\uF1904',   # ale
-        'anpa': '\uF1905',  # anpa
-        'ante': '\uF1906',  # ante
-        'anu': '\uF1907',   # anu
-        'awen': '\uF1908',  # awen
-        'e': '\uF1909',     # e
-        'en': '\uF190A',    # en
-        'esun': '\uF190B',  # esun
-        'ijo': '\uF190C',   # ijo
-        'ike': '\uF190D',   # ike
-        'ilo': '\uF190E',   # ilo
-        'insa': '\uF190F',  # insa
-        'jaki': '\uF1910',  # jaki
-        'jan': '\uF1911',   # jan
-        'jelo': '\uF1912',  # jelo
-        'jo': '\uF1913',    # jo
-        'kala': '\uF1914',  # kala
-        'kalama': '\uF1915', # kalama
-        'kama': '\uF1916',  # kama
-        'kasi': '\uF1917',  # kasi
-        'ken': '\uF1918',   # ken
-        'kepeken': '\uF1919', # kepeken
-        'kili': '\uF191A',  # kili
-        'kiwen': '\uF191B', # kiwen
-        'ko': '\uF191C',    # ko
-        'kon': '\uF191D',   # kon
-        'kule': '\uF191E',  # kule
-        'kulupu': '\uF191F', # kulupu
-        'kute': '\uF1920',  # kute
-        'la': '\uF1921',    # la
-        'lape': '\uF1922',  # lape
-        'laso': '\uF1923',  # laso
-        'lawa': '\uF1924',  # lawa
-        'len': '\uF1925',   # len
-        'lete': '\uF1926',  # lete
-        'li': '\uF1927',    # li
-        'lili': '\uF1928',  # lili
-        'linja': '\uF1929', # linja
-        'lipu': '\uF192A',  # lipu
-        'loje': '\uF192B',  # loje
-        'lon': '\uF192C',   # lon
-        'luka': '\uF192D',  # luka
-        'lukin': '\uF192E', # lukin
-        'lupa': '\uF192F',  # lupa
-        'ma': '\uF1930',    # ma
-        'mama': '\uF1931',  # mama
-        'mani': '\uF1932',  # mani
-        'meli': '\uF1933',  # meli
-        'mi': '\uF1934',    # mi
-        'mije': '\uF1935',  # mije
-        'moku': '\uF1936',  # moku
-        'moli': '\uF1937',  # moli
-        'monsi': '\uF1938', # monsi
-        'mu': '\uF1939',    # mu
-        'mun': '\uF193A',   # mun
-        'musi': '\uF193B',  # musi
-        'mute': '\uF193C',  # mute
-        'nanpa': '\uF193D', # nanpa
-        'nasa': '\uF193E',  # nasa
-        'nasin': '\uF193F', # nasin
-        'nena': '\uF1940',  # nena
-        'ni': '\uF1941',    # ni
-        'nimi': '\uF1942',  # nimi
-        'noka': '\uF1943',  # noka
-        'o': '\uF1944',     # o
-        'olin': '\uF1945',  # olin
-        'ona': '\uF1946',   # ona
-        'open': '\uF1947',  # open
-        'pakala': '\uF1948', # pakala
-        'pali': '\uF1949',  # pali
-        'palisa': '\uF194A', # palisa
-        'pan': '\uF194B',   # pan
-        'pana': '\uF194C',  # pana
-        'pi': '\uF194D',    # pi
-        'pilin': '\uF194E', # pilin
-        'pimeja': '\uF194F', # pimeja
-        'pini': '\uF1950',  # pini
-        'pipi': '\uF1951',  # pipi
-        'poka': '\uF1952',  # poka
-        'poki': '\uF1953',  # poki
-        'pona': '\uF1954',  # pona
-        'pu': '\uF1955',    # pu
-        'sama': '\uF1956',  # sama
-        'seli': '\uF1957',  # seli
-        'selo': '\uF1958',  # selo
-        'seme': '\uF1959',  # seme
-        'sewi': '\uF195A',  # sewi
-        'sijelo': '\uF195B', # sijelo
-        'sike': '\uF195C',  # sike
-        'sin': '\uF195D',   # sin
-        'sina': '\uF195E',  # sina
-        'sinpin': '\uF195F', # sinpin
-        'sitelen': '\uF1960', # sitelen
-        'sona': '\uF1961',  # sona
-        'soweli': '\uF1962', # soweli
-        'suli': '\uF1963',  # suli
-        'suno': '\uF1964',  # suno
-        'supa': '\uF1965',  # supa
-        'suwi': '\uF1966',  # suwi
-        'tan': '\uF1967',   # tan
-        'taso': '\uF1968',  # taso
-        'tawa': '\uF1969',  # tawa
-        'telo': '\uF196A',  # telo
-        'tenpo': '\uF196B', # tenpo
-        'toki': '\uF196C',  # toki
-        'tomo': '\uF196D',  # tomo
-        'tu': '\uF196E',    # tu
-        'unpa': '\uF196F',  # unpa
-        'uta': '\uF1970',   # uta
-        'utala': '\uF1971', # utala
-        'walo': '\uF1972',  # walo
-        'wan': '\uF1973',   # wan
-        'waso': '\uF1974',  # waso
-        'wawa': '\uF1975',  # wawa
-        'weka': '\uF1976',  # weka
-        'wile': '\uF1977',  # wile
-    }
-    
-    # Try to use a Unicode font that might have sitelen pona characters
-    try:
-        # Try different font sizes to see if we can render the character
-        for font_size in [100, 80, 60, 40]:
-            try:
-                font = ImageFont.load_default()
-                
-                if word in sitelen_pona_unicode:
-                    char = sitelen_pona_unicode[word]
-                    
-                    # Test if the character renders
-                    bbox = draw.textbbox((0, 0), char, font=font)
-                    if bbox[2] - bbox[0] > 0:  # Character has width
-                        text_width = bbox[2] - bbox[0]
-                        text_height = bbox[3] - bbox[1]
-                        x = (size[0] - text_width) // 2
-                        y = (size[1] - text_height) // 2
-                        draw.text((x, y), char, font=font, fill='black')
-                        print(f"✓ Rendered Unicode sitelen pona for '{word}'")
-                        return img
-                break
-            except:
-                continue
-                
-    except Exception as e:
-        pass
-    
-    # Fallback to drawing proper geometric sitelen pona representations
+    # Skip Unicode approach entirely as it often shows replacement characters
+    # Go directly to proper geometric sitelen pona representations
     return generate_proper_geometric_sitelen_pona(word, size, draw)
 
 def generate_proper_geometric_sitelen_pona(word, size, draw):
@@ -451,7 +300,7 @@ def generate_proper_geometric_sitelen_pona(word, size, draw):
             draw.ellipse([95, 115, 105, 125], fill='black')  # Food
         ],  # Eat/food
         'toki': lambda: [
-            draw.arc([80, 85, 120, 115], 180, 360, outline='black', width=3),
+            draw.arc([80, 85, 120, 115], 180, 360, fill='black', width=3),
             draw.line([(85, 105), (75, 115)], fill='black', width=2),
             draw.line([(90, 110), (80, 120)], fill='black', width=2)
         ],  # Talk/speak
