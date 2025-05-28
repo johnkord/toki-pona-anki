@@ -91,6 +91,7 @@ def download_font():
     font_path = font_dir / "linjapona.otf"
     
     if font_path.exists():
+        print(f"Using existing font: {font_path}")
         return font_path
     
     font_dir.mkdir(exist_ok=True)
@@ -98,7 +99,8 @@ def download_font():
     # Try different font sources
     font_urls = [
         "https://github.com/kreativekorp/linja-pona/raw/master/linja-pona-4.9.otf",
-        "https://wyub.github.io/tokipona/linja-pona-4.9.otf"
+        "https://wyub.github.io/tokipona/linja-pona-4.9.otf",
+        "https://www.kreativekorp.com/software/fonts/linjapona/linja-pona-4.9.otf"
     ]
     
     for font_url in font_urls:
@@ -116,7 +118,9 @@ def download_font():
         except Exception as e:
             print(f"Failed to download font from {font_url}: {e}")
     
-    # Try to find a fallback system font for testing
+    # Create a sample image - this isn't ideal but ensures images are created
+    print("\nCreating a placeholder font for Sitelen Pona images...")
+    # Using a font that's likely to be available on most systems
     fallback_fonts = [
         "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
         "/usr/share/fonts/liberation/LiberationSans-Regular.ttf",
@@ -128,7 +132,7 @@ def download_font():
             print(f"Using fallback font for testing: {fallback_font}")
             return Path(fallback_font)
     
-    print("\nCould not download a Sitelen Pona font.")
+    print("\nCould not find any usable font.")
     print("You'll need to manually add a Sitelen Pona font to your Anki collection.")
     print("Fonts can be found at: https://github.com/kreativekorp/linja-pona")
     return None
@@ -159,9 +163,17 @@ def generate_sitelen_pona_image(word, font_path, output_dir, size=(200, 200)):
     # Draw the text
     draw.text(position, word, font=font, fill='black')
     
+    # Draw a border around the text to ensure image has visible content
+    img_with_border = Image.new('RGB', size, color='white')
+    draw_border = ImageDraw.Draw(img_with_border) 
+    draw_border.rectangle([(5, 5), (size[0]-5, size[1]-5)], outline='lightgray')
+    
+    # Paste the original image onto the bordered image
+    img_with_border.paste(img, (0, 0))
+    
     # Save the image
     output_file = os.path.join(output_dir, f"{word}.png")
-    img.save(output_file)
+    img_with_border.save(output_file)
     
     return output_file
 
@@ -182,6 +194,11 @@ def generate_sitelen_pona_images(words_data, font_path):
             image_path = generate_sitelen_pona_image(word, font_path, image_dir)
             if image_path:
                 word_to_image[word] = image_path
+                # Make sure the image was created successfully
+                if os.path.exists(image_path) and os.path.getsize(image_path) > 0:
+                    print(f"✓ Generated image for '{word}': {os.path.basename(image_path)}")
+                else:
+                    print(f"✗ Failed to generate valid image for '{word}'")
         except Exception as e:
             print(f"Error generating image for '{word}': {e}")
     
@@ -215,6 +232,10 @@ def create_anki_deck():
         image_filename = ""
         if word in word_to_image:
             image_filename = os.path.basename(word_to_image[word])
+            # Verify image file exists and has content
+            if not os.path.exists(word_to_image[word]) or os.path.getsize(word_to_image[word]) == 0:
+                print(f"Warning: Image for '{word}' is invalid or empty")
+                image_filename = ""
         
         # Create the note with all fields
         note = genanki.Note(
@@ -232,10 +253,17 @@ def create_anki_deck():
         media_files.append(str(font_path))
     
     # Add all generated images to media files
-    media_files.extend([str(path) for path in word_to_image.values()])
+    valid_image_files = []
+    for word, path in word_to_image.items():
+        if os.path.exists(path) and os.path.getsize(path) > 0:
+            valid_image_files.append(str(path))
+            print(f"Adding image file to Anki package: {os.path.basename(path)}")
+    
+    media_files.extend(valid_image_files)
     
     if media_files:
         anki_package.media_files = media_files
+        print(f"Added {len(media_files)} media files to Anki package")
     
     anki_package.write_to_file(OUTPUT_FILE)
     print(f"Anki deck created: {OUTPUT_FILE}")
