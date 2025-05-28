@@ -101,7 +101,7 @@ def download_font():
     font_dir = Path("fonts")
     font_path = font_dir / "linjapona.otf"
     
-    if font_path.exists():
+    if font_path.exists() and os.path.getsize(font_path) > 0:
         print(f"Using existing font: {font_path}")
         return font_path
     
@@ -124,14 +124,45 @@ def download_font():
             response = requests.get(font_url)
             response.raise_for_status()
             
+            # Verify we got actual binary content with some minimum size
+            if len(response.content) < 1000:  # Basic size check for font files
+                print(f"Downloaded content is too small to be a valid font file: {len(response.content)} bytes")
+                continue
+                
+            # Ensure the file has the correct extension based on URL
+            if font_url.endswith('.ttf'):
+                font_path = font_dir / "linjapona.ttf"
+            elif font_url.endswith('.otf'):
+                font_path = font_dir / "linjapona.otf"
+            
             with open(font_path, 'wb') as f:
                 f.write(response.content)
             
-            print(f"Downloaded font to {font_path}")
+            print(f"Downloaded font to {font_path} ({len(response.content)} bytes)")
             return font_path
         
         except Exception as e:
             print(f"Failed to download font from {font_url}: {e}")
+    
+    print("\nAttempting to find a locally installed Sitelen Pona font...")
+    
+    # Try to locate a manually installed Sitelen Pona font in common locations
+    local_font_paths = [
+        Path.home() / "Library/Fonts/linjapona.otf",  # macOS
+        Path.home() / "Library/Fonts/linja-pona.otf",
+        Path.home() / ".fonts/linjapona.otf",  # Linux
+        Path.home() / ".fonts/linja-pona.otf",
+        Path("/usr/local/share/fonts/linjapona.otf"),
+        Path("/usr/local/share/fonts/linja-pona.otf"),
+    ]
+    
+    for local_path in local_font_paths:
+        if local_path.exists() and os.path.getsize(local_path) > 0:
+            print(f"Found local Sitelen Pona font: {local_path}")
+            # Copy the font to our fonts directory
+            with open(local_path, 'rb') as src, open(font_path, 'wb') as dst:
+                dst.write(src.read())
+            return font_path
     
     # Create a sample image - this isn't ideal but ensures images are created
     print("\nCreating a placeholder font for Sitelen Pona images...")
@@ -143,7 +174,7 @@ def download_font():
     ]
     
     for fallback_font in fallback_fonts:
-        if os.path.exists(fallback_font):
+        if os.path.exists(fallback_font) and os.path.getsize(fallback_font) > 0:
             print(f"Using fallback font for testing: {fallback_font}")
             return Path(fallback_font)
     
@@ -312,8 +343,10 @@ def generate_sitelen_pona_image(word, font_path, output_dir, size=(200, 200)):
     if font_path and font_path.exists():
         # Check if this is actually a sitelen pona font, not just a fallback
         font_name = str(font_path).lower()
-        if any(name in font_name for name in ['linja', 'pona', 'sitelen']):
+        if any(name in font_name for name in ['linja', 'pona', 'sitelen']) and font_name.endswith(('.ttf', '.otf')):
             sitelen_pona_font_available = True
+        elif '/usr/share/fonts/' in font_name:  # Fallback system fonts should not be treated as Sitelen Pona fonts
+            sitelen_pona_font_available = False
     
     if not sitelen_pona_font_available:
         print(f"No sitelen pona font available for '{word}', using geometric representation")
@@ -397,11 +430,13 @@ def create_anki_deck():
         # Get the image filename if available, otherwise empty string
         image_filename = ""
         if word in word_to_image:
-            image_filename = os.path.basename(word_to_image[word])
-            # Verify image file exists and has content
-            if not os.path.exists(word_to_image[word]) or os.path.getsize(word_to_image[word]) == 0:
+            # Use just the basename for the image filename in notes
+            image_path = word_to_image[word]
+            if os.path.exists(image_path) and os.path.getsize(image_path) > 0:
+                image_filename = os.path.basename(image_path)
+                print(f"Using image for '{word}': {image_filename}")
+            else:
                 print(f"Warning: Image for '{word}' is invalid or empty")
-                image_filename = ""
         
         # Create the note with all fields
         note = genanki.Note(
@@ -416,12 +451,20 @@ def create_anki_deck():
     
     # Add the font to media files if available
     if font_path and font_path.exists():
-        media_files.append(str(font_path))
+        # For fonts, add the file with the original filename
+        font_basename = os.path.basename(str(font_path))
+        if font_basename.endswith(('.ttf', '.otf')):
+            media_files.append(str(font_path))
+            print(f"Adding font file to Anki package: {font_basename}")
+        else:
+            print(f"Font file doesn't have a valid extension (.ttf/.otf): {font_basename}")
     
     # Add all generated images to media files
     valid_image_files = []
     for word, path in word_to_image.items():
         if os.path.exists(path) and os.path.getsize(path) > 0:
+            # For images, we need to make sure they're added with the same basename
+            # that's referenced in the notes
             valid_image_files.append(str(path))
             print(f"Adding image file to Anki package: {os.path.basename(path)}")
     
@@ -434,6 +477,14 @@ def create_anki_deck():
     anki_package.write_to_file(OUTPUT_FILE)
     print(f"Anki deck created: {OUTPUT_FILE}")
     print(f"Number of cards: {len(words_data) * 2}")  # Two card types per word
+    
+    # Add a helpful message about missing images
+    print("\nNotes:")
+    print("- If Sitelen Pona images aren't showing in Anki after importing the deck:")
+    print("  1. In Anki, go to Tools > Check Media")
+    print("  2. Close and restart Anki")
+    print("  3. If that doesn't work, manually add the Sitelen Pona font to your system")
+    print("     and update the card templates to use that font")
 
 if __name__ == "__main__":
     create_anki_deck()

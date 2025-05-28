@@ -56,6 +56,32 @@ The generated Anki deck contains two card types for each Toki Pona word:
 - Images are embedded in the Anki deck to ensure they display correctly even without the font installed
 - For proper display of Sitelen Pona characters in Anki, you may need to adjust the card templates to use the appropriate font.
 
+## Troubleshooting
+
+### Images not showing in cards
+
+If the Sitelen Pona images aren't showing in your Anki cards after importing the deck:
+
+1. In Anki, go to **Tools > Check Media** to ensure all media files are properly recognized
+2. Close and restart Anki to refresh the media cache
+3. If that doesn't work, try the following:
+   - Make sure you have a Sitelen Pona font installed on your system
+   - In Anki, edit the card template to ensure the `<img>` tags are properly formatted
+   - Look for any error messages in Anki's browser console (Ctrl+Shift+I or Cmd+Option+I on Mac)
+
+### Missing Sitelen Pona font characters
+
+If the Sitelen Pona characters are showing as boxes or generic symbols:
+
+1. Download and install a Sitelen Pona font from [Kreative Korp](https://www.kreativekorp.com/software/fonts/linjapona/)
+2. In Anki, edit the card template and ensure the CSS includes:
+   ```css
+   .sitelen-pona {
+       font-family: "linja-pona", "linjapona", "sitelen pona";
+       font-size: 60px;
+   }
+   ```
+
 ## Credits
 
 - Toki Pona language created by Sonja Lang
