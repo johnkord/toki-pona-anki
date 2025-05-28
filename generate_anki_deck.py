@@ -37,12 +37,14 @@ TOKI_PONA_MODEL = genanki.Model(
         {
             'name': 'Sitelen Pona to Word + Definition',
             'qfmt': '<div class="sitelen-pona">{{SitelenPona}}</div><br>'
-                    '<div><img src="{{SitelenPonaImage}}" class="sitelen-image"></div>',
+                    '{{#SitelenPonaImage}}<div><img src="{{SitelenPonaImage}}" alt="{{Word}}" class="sitelen-image" width="180" height="180"></div>{{/SitelenPonaImage}}'
+                    '{{^SitelenPonaImage}}<div class="no-image">No image available for {{Word}}</div>{{/SitelenPonaImage}}',
             'afmt': '<div class="word">{{Word}}</div><br>'
                     '<div class="type">{{Type}}</div><br>'
                     '<div class="definition">{{Definition}}</div><br>'
                     '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
-                    '<div><img src="{{SitelenPonaImage}}" class="sitelen-image"></div>',
+                    '{{#SitelenPonaImage}}<div><img src="{{SitelenPonaImage}}" alt="{{Word}}" class="sitelen-image" width="180" height="180"></div>{{/SitelenPonaImage}}'
+                    '{{^SitelenPonaImage}}<div class="no-image">No image available for {{Word}}</div>{{/SitelenPonaImage}}',
         },
         {
             'name': 'Word to Sitelen Pona + Definition',
@@ -51,7 +53,8 @@ TOKI_PONA_MODEL = genanki.Model(
                     '<div class="type">{{Type}}</div><br>'
                     '<div class="definition">{{Definition}}</div><br>'
                     '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
-                    '<div><img src="{{SitelenPonaImage}}" class="sitelen-image"></div>',
+                    '{{#SitelenPonaImage}}<div><img src="{{SitelenPonaImage}}" alt="{{Word}}" class="sitelen-image" width="180" height="180"></div>{{/SitelenPonaImage}}'
+                    '{{^SitelenPonaImage}}<div class="no-image">No image available for {{Word}}</div>{{/SitelenPonaImage}}',
         }
     ],
     css="""
@@ -78,9 +81,17 @@ TOKI_PONA_MODEL = genanki.Model(
             font-size: 60px;
         }
         .sitelen-image {
-            max-width: 180px;
-            max-height: 180px;
+            width: 180px;
+            height: 180px;
             margin: 10px auto;
+            display: block;
+            border: 1px solid #ddd;
+        }
+        .no-image {
+            color: #999;
+            font-style: italic;
+            margin: 10px auto;
+            text-align: center;
         }
     """
 )
@@ -326,17 +337,9 @@ def generate_sitelen_pona_image(word, font_path, output_dir, size=(200, 200)):
             print(f"Error loading sitelen pona font for '{word}', using geometric shapes: {e}")
             img = generate_geometric_sitelen_pona(word, size)
     
-    # Add a subtle border
-    img_with_border = Image.new('RGB', size, color='white')
-    draw_border = ImageDraw.Draw(img_with_border) 
-    draw_border.rectangle([(5, 5), (size[0]-5, size[1]-5)], outline='lightgray')
-    
-    # Paste the original image onto the bordered image
-    img_with_border.paste(img, (0, 0))
-    
-    # Save the image
+    # Save the image directly without additional border processing
     output_file = os.path.join(output_dir, f"{word}.png")
-    img_with_border.save(output_file)
+    img.save(output_file, 'PNG')
     
     return output_file
 
