@@ -26,9 +26,9 @@ jobs:
       - name: Generate Anki deck
         run: python generate_anki_deck.py
       
-      - name: Generate release date
+      - name: Generate release date and time
         id: date
-        run: echo "release_date=$(date +'%Y.%m.%d')" >> $GITHUB_OUTPUT
+        run: echo "release_date=$(date +'%Y.%m.%d-%H.%M.%S')" >> $GITHUB_OUTPUT
       
       - name: Create Release
         id: create_release
