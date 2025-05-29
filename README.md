@@ -45,10 +45,15 @@ The latest version of the Anki deck is automatically built and released whenever
 
 ## Deck Structure
 
-The generated Anki deck contains two card types for each Toki Pona word:
+The generated Anki deck contains five card types for each Toki Pona word:
 
 1. **Sitelen Pona to Word + Definition**: Shows the Sitelen Pona character and image on the front and the word with its definition on the back.
 2. **Word to Sitelen Pona + Definition**: Shows the Toki Pona word on the front and its Sitelen Pona character, image, and definition on the back.
+3. **Definition to Word + Sitelen Pona**: Shows the definition on the front and you have to guess the word and Sitelen Pona representation on the back.
+4. **Image to Word + Definition**: Shows only the Sitelen Pona image on the front and you have to guess the word and its definition on the back.
+5. **Word to Definition + Image**: Shows the Toki Pona word on the front and you have to guess the definition and Sitelen Pona image on the back.
+
+These card variants ensure comprehensive learning from different angles while maintaining the constraint that no card shows both the word and image together on the front side.
 
 ## Sitelen Pona Image Generation
 

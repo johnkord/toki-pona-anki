@@ -49,6 +49,33 @@ TOKI_PONA_MODEL = genanki.Model(
                     '<div class="definition">{{Definition}}</div><br>'
                     '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
                     '{{SitelenPonaImage}}',
+        },
+        {
+            'name': 'Definition to Word + Sitelen Pona',
+            'qfmt': '<div class="definition">{{Definition}}</div>',
+            'afmt': '<div class="word">{{Word}}</div><br>'
+                    '<div class="type">{{Type}}</div><br>'
+                    '<div class="definition">{{Definition}}</div><br>'
+                    '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
+                    '{{SitelenPonaImage}}',
+        },
+        {
+            'name': 'Image to Word + Definition',
+            'qfmt': '{{SitelenPonaImage}}',
+            'afmt': '<div class="word">{{Word}}</div><br>'
+                    '<div class="type">{{Type}}</div><br>'
+                    '<div class="definition">{{Definition}}</div><br>'
+                    '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
+                    '{{SitelenPonaImage}}',
+        },
+        {
+            'name': 'Word to Definition + Image',
+            'qfmt': '<div class="word">{{Word}}</div>',
+            'afmt': '<div class="word">{{Word}}</div><br>'
+                    '<div class="type">{{Type}}</div><br>'
+                    '<div class="definition">{{Definition}}</div><br>'
+                    '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
+                    '{{SitelenPonaImage}}',
         }
     ],
     css="""
@@ -176,7 +203,7 @@ def create_anki_deck():
     
     anki_package.write_to_file(OUTPUT_FILE)
     print(f"Anki deck created: {OUTPUT_FILE}")
-    print(f"Number of cards: {len(words_data) * 2}")  # Two card types per word
+    print(f"Number of cards: {len(words_data) * 5}")  # Five card types per word
     
     # Add a helpful message about missing images
     print("\nNotes:")
