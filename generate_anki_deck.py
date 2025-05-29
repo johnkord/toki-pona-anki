@@ -34,14 +34,12 @@ TOKI_PONA_MODEL = genanki.Model(
         {
             'name': 'Sitelen Pona to Word + Definition',
             'qfmt': '<div class="sitelen-pona">{{SitelenPona}}</div><br>'
-                    '{{#SitelenPonaImage}}<div><img src="{{SitelenPonaImage}}" alt="{{Word}}" class="sitelen-image" width="180" height="180"></div>{{/SitelenPonaImage}}'
-                    '{{^SitelenPonaImage}}<div class="no-image">No image available for {{Word}}</div>{{/SitelenPonaImage}}',
+                    '{{SitelenPonaImage}}',
             'afmt': '<div class="word">{{Word}}</div><br>'
                     '<div class="type">{{Type}}</div><br>'
                     '<div class="definition">{{Definition}}</div><br>'
                     '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
-                    '{{#SitelenPonaImage}}<div><img src="{{SitelenPonaImage}}" alt="{{Word}}" class="sitelen-image" width="180" height="180"></div>{{/SitelenPonaImage}}'
-                    '{{^SitelenPonaImage}}<div class="no-image">No image available for {{Word}}</div>{{/SitelenPonaImage}}',
+                    '{{SitelenPonaImage}}',
         },
         {
             'name': 'Word to Sitelen Pona + Definition',
@@ -50,8 +48,7 @@ TOKI_PONA_MODEL = genanki.Model(
                     '<div class="type">{{Type}}</div><br>'
                     '<div class="definition">{{Definition}}</div><br>'
                     '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
-                    '{{#SitelenPonaImage}}<div><img src="{{SitelenPonaImage}}" alt="{{Word}}" class="sitelen-image" width="180" height="180"></div>{{/SitelenPonaImage}}'
-                    '{{^SitelenPonaImage}}<div class="no-image">No image available for {{Word}}</div>{{/SitelenPonaImage}}',
+                    '{{SitelenPonaImage}}',
         }
     ],
     css="""
@@ -154,16 +151,19 @@ def create_anki_deck():
         definition = info['definition']
         word_type = info['type']
         
-        # Get the image filename if available, otherwise empty string
-        image_reference = ""
+        # Create the image HTML tag if available, otherwise show no-image message
+        image_html = ""
         if word in word_to_image:
-            image_reference = os.path.basename(word_to_image[word])
-            print(f"Using image filename for '{word}': {image_reference}")
+            image_filename = os.path.basename(word_to_image[word])
+            image_html = f'<div><img src="{image_filename}" alt="{word}" class="sitelen-image" width="180" height="180"></div>'
+            print(f"Using image HTML for '{word}': {image_filename}")
+        else:
+            image_html = f'<div class="no-image">No image available for {word}</div>'
         
         # Create the note with all fields
         note = genanki.Note(
             model=TOKI_PONA_MODEL,
-            fields=[word, definition, word_type, word, image_reference]
+            fields=[word, definition, word_type, word, image_html]
         )
         deck.add_note(note)
     
