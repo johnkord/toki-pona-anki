@@ -32,16 +32,6 @@ TOKI_PONA_MODEL = genanki.Model(
     ],
     templates=[
         {
-            'name': 'Sitelen Pona to Word + Definition',
-            'qfmt': '<div class="sitelen-pona">{{SitelenPona}}</div><br>'
-                    '{{SitelenPonaImage}}',
-            'afmt': '<div class="word">{{Word}}</div><br>'
-                    '<div class="type">{{Type}}</div><br>'
-                    '<div class="definition">{{Definition}}</div><br>'
-                    '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
-                    '{{SitelenPonaImage}}',
-        },
-        {
             'name': 'Word to Sitelen Pona + Definition',
             'qfmt': '{{Word}}',
             'afmt': '<div class="word">{{Word}}</div><br>'
@@ -173,8 +163,11 @@ def create_anki_deck():
                 media_files.append(str(image_path))
                 print(f"Adding image for '{word}': {os.path.basename(image_path)}")
     
-    # Create a note for each word
-    for word, info in words_data.items():
+    # Create a note for each word (in random order for better initial presentation)
+    words_list = list(words_data.items())
+    random.shuffle(words_list)
+    
+    for word, info in words_list:
         definition = info['definition']
         word_type = info['type']
         
@@ -203,7 +196,7 @@ def create_anki_deck():
     
     anki_package.write_to_file(OUTPUT_FILE)
     print(f"Anki deck created: {OUTPUT_FILE}")
-    print(f"Number of cards: {len(words_data) * 5}")  # Five card types per word
+    print(f"Number of cards: {len(words_data) * 4}")  # Four card types per word
     
     # Add a helpful message about missing images
     print("\nNotes:")
