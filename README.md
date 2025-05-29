@@ -110,6 +110,10 @@ If the nasin nanpa font is not available, the script will generate placeholder i
 2. Place it in the repository root directory
 3. Regenerate images and deck as described above
 
+## Release Management
+
+For managing repository releases, see [RELEASE_MANAGEMENT.md](RELEASE_MANAGEMENT.md). This includes scripts to clean up old releases and information about the updated release workflow.
+
 ## Credits
 
 - Toki Pona language created by Sonja Lang

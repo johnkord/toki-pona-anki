@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'toki_pona_words.json'
+      - 'generate_anki_deck.py'
+      - 'generate_images.py'
+      - 'requirements.txt'
+  workflow_dispatch:  # Allow manual triggering
 
 jobs:
   build-and-release:
