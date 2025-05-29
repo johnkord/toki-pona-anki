@@ -1,0 +1,152 @@
+name: Cleanup Releases
+
+on:
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  cleanup-releases:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+      
+      - name: Clean up releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
+        run: |
+          python3 << 'EOF'
+          import os
+          import sys
+          import requests
+          import json
+
+          def make_github_request(url, method='GET', token=None, data=None):
+              """Make a request to GitHub API."""
+              headers = {
+                  'Accept': 'application/vnd.github.v3+json',
+                  'User-Agent': 'release-cleanup-script'
+              }
+              
+              if token:
+                  headers['Authorization'] = f'token {token}'
+              
+              try:
+                  if method == 'GET':
+                      response = requests.get(url, headers=headers)
+                  elif method == 'DELETE':
+                      response = requests.delete(url, headers=headers)
+                  else:
+                      response = requests.request(method, url, headers=headers, json=data)
+                  
+                  response.raise_for_status()
+                  return response
+              except requests.exceptions.RequestException as e:
+                  print(f"Error making request to {url}: {e}")
+                  return None
+
+          def get_releases(token):
+              """Get all releases from GitHub."""
+              url = "https://api.github.com/repos/johnkord/toki-pona-anki/releases"
+              response = make_github_request(url, token=token)
+              
+              if response:
+                  return response.json()
+              return []
+
+          def delete_release(release_id, token):
+              """Delete a release by ID."""
+              url = f"https://api.github.com/repos/johnkord/toki-pona-anki/releases/{release_id}"
+              response = make_github_request(url, method='DELETE', token=token)
+              return response is not None
+
+          # Main cleanup logic
+          KEEP_RELEASE = "Toki Pona Anki Deck 2025.05.29-05.13.41"
+          KEEP_TAG = "v2025.05.29-05.13.41"
+          
+          print("GitHub Releases Cleanup")
+          print("=" * 40)
+          print(f"Keeping only: {KEEP_RELEASE}")
+          print(f"Tag: {KEEP_TAG}")
+          print()
+          
+          # Get GitHub token
+          token = os.environ.get('GITHUB_TOKEN')
+          if not token:
+              print("Error: No GitHub token found.")
+              sys.exit(1)
+          
+          print("✓ GitHub token found")
+          
+          # Get all releases
+          releases = get_releases(token)
+          if not releases:
+              print("No releases found or error getting releases.")
+              sys.exit(1)
+          
+          print(f"Found {len(releases)} releases:")
+          for release in releases:
+              print(f"  - {release['name']} (tag: {release['tag_name']}, id: {release['id']})")
+          print()
+          
+          # Find releases to delete
+          releases_to_delete = []
+          keep_release_found = False
+          
+          for release in releases:
+              if release['name'] == KEEP_RELEASE or release['tag_name'] == KEEP_TAG:
+                  keep_release_found = True
+                  print(f"✓ Found release to keep: {release['name']} (tag: {release['tag_name']})")
+              else:
+                  releases_to_delete.append(release)
+          
+          if not keep_release_found:
+              print(f"Warning: The release to keep ({KEEP_RELEASE}) was not found!")
+              print("Available releases:")
+              for release in releases:
+                  print(f"  - '{release['name']}' (tag: '{release['tag_name']}')")
+          
+          if not releases_to_delete:
+              print("No releases to delete.")
+              sys.exit(0)
+          
+          print(f"\nDeleting {len(releases_to_delete)} releases:")
+          for release in releases_to_delete:
+              print(f"  - {release['name']} (tag: {release['tag_name']}, id: {release['id']})")
+          
+          # Delete releases
+          success_count = 0
+          failed_count = 0
+          
+          for release in releases_to_delete:
+              print(f"Deleting release: {release['name']} (id: {release['id']})")
+              if delete_release(release['id'], token):
+                  print(f"✓ Successfully deleted release: {release['name']}")
+                  success_count += 1
+              else:
+                  print(f"✗ Failed to delete release: {release['name']}")
+                  failed_count += 1
+          
+          # Summary
+          print("\nCleanup Summary:")
+          print(f"✓ Successfully deleted: {success_count} releases")
+          if failed_count > 0:
+              print(f"✗ Failed to delete: {failed_count} releases")
+          if keep_release_found:
+              print(f"✓ Kept release: {KEEP_RELEASE}")
+          
+          if failed_count == 0:
+              print("\n🎉 All unwanted releases have been successfully deleted!")
+          else:
+              print(f"\n⚠️  Some releases could not be deleted. Please check manually.")
+          EOF
