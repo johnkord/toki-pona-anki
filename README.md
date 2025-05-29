@@ -8,8 +8,8 @@ This repository contains a script to generate an Anki deck for learning Toki Pon
 ## Requirements
 
 - Python 3.6 or higher
-- Required Python packages: `genanki`, `requests`, `Pillow` (install using `pip install -r requirements.txt`)
-- Internet connection (to download the Sitelen Pona font)
+- Required Python packages: `genanki`, `Pillow` (install using `pip install -r requirements.txt`)
+- `nasin-nanpa-4.0.2-UCSUR.otf` font file (should be included in the repository)
 - Anki desktop application (to import the generated deck)
 
 ## Usage
@@ -31,12 +31,17 @@ The latest version of the Anki deck is automatically built and released whenever
    pip install -r requirements.txt
    ```
 
-3. Run the script to generate the Anki deck:
+3. Generate the Sitelen Pona images (if not already present):
+   ```
+   python generate_images.py
+   ```
+
+4. Run the script to generate the Anki deck:
    ```
    python generate_anki_deck.py
    ```
 
-4. Import the generated `toki_pona_sitelen_pona.apkg` file into Anki.
+5. Import the generated `toki_pona_sitelen_pona.apkg` file into Anki.
 
 ## Deck Structure
 
@@ -45,18 +50,64 @@ The generated Anki deck contains two card types for each Toki Pona word:
 1. **Sitelen Pona to Word + Definition**: Shows the Sitelen Pona character and image on the front and the word with its definition on the back.
 2. **Word to Sitelen Pona + Definition**: Shows the Toki Pona word on the front and its Sitelen Pona character, image, and definition on the back.
 
+## Sitelen Pona Image Generation
+
+The deck uses authentic Sitelen Pona hieroglyphic images generated using the nasin nanpa font with proper Unicode character mappings (UCSUR F1900-F19FF). 
+
+To generate the images:
+1. Ensure `nasin-nanpa-4.0.2-UCSUR.otf` is in the repository root
+2. Run `python generate_images.py`
+
+The script will:
+- Use the nasin nanpa font with proper Unicode codepoints for authentic sitelen pona characters
+- Fall back to placeholder images if the font is not available
+- Generate 200x200 PNG images for all 137 Toki Pona words
+
 ## Notes
 
-- The script attempts to automatically download a Sitelen Pona font, but if it fails, you'll need to:
-  1. Download a Sitelen Pona font manually (e.g., from [Kreative Korp](https://www.kreativekorp.com/software/fonts/linjapona/))
-  2. Place it in the `fonts` directory as `linjapona.otf`
-  3. Install the font on your system
-  4. In Anki, ensure the font is available for card templates
-- The script generates both font-based Sitelen Pona characters and image versions of each character
-- Images are embedded in the Anki deck to ensure they display correctly even without the font installed
-- For proper display of Sitelen Pona characters in Anki, you may need to adjust the card templates to use the appropriate font.
+- All Sitelen Pona images use authentic Unicode character mappings from the official UCSUR standard
+- Images are pre-generated and embedded in the Anki deck for consistent display
+- The nasin nanpa font provides the most accurate Sitelen Pona representations
+- If images appear as squares with X's, the Unicode font approach failed and placeholders were used
+
+## Troubleshooting
+
+### Images not showing in cards
+
+If the Sitelen Pona images aren't showing in your Anki cards after importing the deck:
+
+1. In Anki, go to **Tools > Check Media** to ensure all media files are properly recognized
+2. Close and restart Anki to refresh the media cache
+3. If that doesn't work, try the following:
+   - Make sure you have a Sitelen Pona font installed on your system
+   - In Anki, edit the card template to ensure the `<img>` tags are properly formatted
+   - Look for any error messages in Anki's browser console (Ctrl+Shift+I or Cmd+Option+I on Mac)
+
+### Missing or incorrect Sitelen Pona images
+
+If the Sitelen Pona images are showing as squares with X's or generic placeholders:
+
+1. Ensure `nasin-nanpa-4.0.2-UCSUR.otf` is in the repository root directory
+2. Regenerate the images by running:
+   ```
+   python generate_images.py
+   ```
+3. Regenerate the Anki deck:
+   ```
+   python generate_anki_deck.py
+   ```
+4. Re-import the deck into Anki
+
+### Font not available
+
+If the nasin nanpa font is not available, the script will generate placeholder images with the word names. To get authentic sitelen pona hieroglyphs:
+
+1. Obtain the `nasin-nanpa-4.0.2-UCSUR.otf` font file
+2. Place it in the repository root directory
+3. Regenerate images and deck as described above
 
 ## Credits
 
 - Toki Pona language created by Sonja Lang
-- linja pona font by jan Same
+- nasin nanpa font by jan Same
+- Unicode sitelen pona character mappings from UCSUR (F1900-F19FF)
