@@ -139,28 +139,26 @@ def create_anki_deck():
     # Load pre-generated images
     word_to_image = load_sitelen_pona_images(words_data)
     
-    # Build media files list in the same order as we'll process words
+    # Build media files list for genanki to package
     media_files = []
-    word_to_media_index = {}
     
     for word in words_data.keys():
         if word in word_to_image:
             image_path = word_to_image[word]
             if os.path.exists(image_path) and os.path.getsize(image_path) > 0:
-                word_to_media_index[word] = len(media_files)
                 media_files.append(str(image_path))
-                print(f"Adding image for '{word}' at index {word_to_media_index[word]}: {os.path.basename(image_path)}")
+                print(f"Adding image for '{word}': {os.path.basename(image_path)}")
     
     # Create a note for each word
     for word, info in words_data.items():
         definition = info['definition']
         word_type = info['type']
         
-        # Get the media file index if available, otherwise empty string
+        # Get the image filename if available, otherwise empty string
         image_reference = ""
-        if word in word_to_media_index:
-            image_reference = str(word_to_media_index[word])
-            print(f"Using media index for '{word}': {image_reference}")
+        if word in word_to_image:
+            image_reference = os.path.basename(word_to_image[word])
+            print(f"Using image filename for '{word}': {image_reference}")
         
         # Create the note with all fields
         note = genanki.Note(
