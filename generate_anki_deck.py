@@ -319,11 +319,15 @@ def create_anki_deck():
                 media_files.append(str(image_path))
                 print(f"Adding image for '{word}': {os.path.basename(image_path)}")
     
-    # Create a note for each word (in random order for better initial presentation)
-    words_list = list(words_data.items())
-    random.shuffle(words_list)
+    # IMPORTANT: All Anki cards should be randomized for optimal learning experience.
+    # This ensures users get a completely mixed study session rather than seeing
+    # all card variants of one word together. Future developers should maintain
+    # this randomization to preserve the intended learning flow.
     
-    for word, info in words_list:
+    # First, create all notes without adding them to the deck
+    all_notes = []
+    
+    for word, info in words_data.items():
         definition = info['definition']
         word_type = info['type']
         
@@ -346,7 +350,14 @@ def create_anki_deck():
                 model=model,
                 fields=[word, definition, word_type, word, image_html, unique_id]
             )
-            deck.add_note(note)
+            all_notes.append(note)
+    
+    # Randomize ALL cards (not just words) for optimal learning experience
+    random.shuffle(all_notes)
+    
+    # Add all randomized notes to the deck
+    for note in all_notes:
+        deck.add_note(note)
     
     # Create the Anki package
     anki_package = genanki.Package(deck)
