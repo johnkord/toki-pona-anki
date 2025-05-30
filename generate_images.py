@@ -112,6 +112,8 @@ SITELEN_PONA_UNICODE = {
     'sitelen': chr(0xF1960),
     'sona': chr(0xF1961),
     'soweli': chr(0xF1962),
+    # NOTE: 'su' temporarily removed from toki_pona_words.json due to nasin nanpa font rendering issues
+    # Should be re-enabled when font support is added. Unicode mapping would be: 'su': chr(0xF19XX)
     'suli': chr(0xF1963),
     'suno': chr(0xF1964),
     'supa': chr(0xF1965),
