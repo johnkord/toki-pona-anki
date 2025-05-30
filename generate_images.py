@@ -278,7 +278,8 @@ def generate_all_images():
         try:
             img = generate_sitelen_pona_image(word, font_path, size=(200, 200))
             output_file = images_dir / f"{word}.png"
-            img.save(output_file, 'PNG')
+            # Optimize PNG for web compatibility
+            img.save(output_file, 'PNG', optimize=True, compress_level=6)
             
             if output_file.exists() and os.path.getsize(output_file) > 0:
                 if word in SITELEN_PONA_UNICODE and font_path:

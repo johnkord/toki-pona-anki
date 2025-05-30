@@ -65,12 +65,14 @@ To generate the images:
 The script will:
 - Use the nasin nanpa font with proper Unicode codepoints for authentic sitelen pona characters
 - Fall back to placeholder images if the font is not available
-- Generate 200x200 PNG images for all 137 Toki Pona words
+- Generate optimized 200x200 PNG images for all 137 Toki Pona words
+- Optimize images for web compatibility (including AnkiApp support)
 
 ## Notes
 
 - All Sitelen Pona images use authentic Unicode character mappings from the official UCSUR standard
 - Images are pre-generated and embedded in the Anki deck for consistent display
+- Images are optimized for web compatibility, ensuring they work in both Anki desktop and AnkiApp
 - The nasin nanpa font provides the most accurate Sitelen Pona representations
 - If images appear as squares with X's, the Unicode font approach failed and placeholders were used
 
@@ -86,6 +88,18 @@ If the Sitelen Pona images aren't showing in your Anki cards after importing the
    - Make sure you have a Sitelen Pona font installed on your system
    - In Anki, edit the card template to ensure the `<img>` tags are properly formatted
    - Look for any error messages in Anki's browser console (Ctrl+Shift+I or Cmd+Option+I on Mac)
+
+### Images showing as broken in AnkiApp (Web App)
+
+If images appear as broken or don't load in AnkiApp but work fine in Anki desktop:
+
+1. This has been fixed in recent versions - try downloading the latest deck from the releases page
+2. The images are now optimized for web compatibility with better compression and HTML attributes
+3. If you're building the deck yourself, make sure to regenerate both images and the deck:
+   ```
+   python generate_images.py
+   python generate_anki_deck.py
+   ```
 
 ### Missing or incorrect Sitelen Pona images
 
