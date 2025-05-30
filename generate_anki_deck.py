@@ -15,97 +15,253 @@ import genanki
 from pathlib import Path
 
 # Constants
-MODEL_ID = random.randrange(1 << 30, 1 << 31)
+MODEL_ID_BASE = random.randrange(1 << 30, 1 << 31)
 DECK_ID = random.randrange(1 << 30, 1 << 31)
 OUTPUT_FILE = "toki_pona_sitelen_pona.apkg"
 
-# Model for Anki cards
-TOKI_PONA_MODEL = genanki.Model(
-    MODEL_ID,
-    'Toki Pona Sitelen Pona Model',
-    fields=[
-        {'name': 'Word'},
-        {'name': 'Definition'},
-        {'name': 'Type'},
-        {'name': 'SitelenPona'},
-        {'name': 'SitelenPonaImage'}
-    ],
-    templates=[
-        {
-            'name': 'Word to Sitelen Pona + Definition',
-            'qfmt': '{{Word}}',
-            'afmt': '<div class="word">{{Word}}</div><br>'
-                    '<div class="type">{{Type}}</div><br>'
-                    '<div class="definition">{{Definition}}</div><br>'
-                    '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
-                    '{{SitelenPonaImage}}',
-        },
-        {
-            'name': 'Definition to Word + Sitelen Pona',
-            'qfmt': '<div class="definition">{{Definition}}</div>',
-            'afmt': '<div class="word">{{Word}}</div><br>'
-                    '<div class="type">{{Type}}</div><br>'
-                    '<div class="definition">{{Definition}}</div><br>'
-                    '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
-                    '{{SitelenPonaImage}}',
-        },
-        {
-            'name': 'Image to Word + Definition',
-            'qfmt': '{{SitelenPonaImage}}',
-            'afmt': '<div class="word">{{Word}}</div><br>'
-                    '<div class="type">{{Type}}</div><br>'
-                    '<div class="definition">{{Definition}}</div><br>'
-                    '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
-                    '{{SitelenPonaImage}}',
-        },
-        {
-            'name': 'Word to Definition + Image',
-            'qfmt': '<div class="word">{{Word}}</div>',
-            'afmt': '<div class="word">{{Word}}</div><br>'
-                    '<div class="type">{{Type}}</div><br>'
-                    '<div class="definition">{{Definition}}</div><br>'
-                    '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
-                    '{{SitelenPonaImage}}',
-        }
-    ],
-    css="""
-        .card {
-            font-family: arial;
-            font-size: 20px;
-            text-align: center;
-            color: black;
-            background-color: white;
-        }
-        .word {
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .type {
-            font-style: italic;
-            color: #666;
-        }
-        .definition {
-            font-size: 22px;
-        }
-        .sitelen-pona {
-            font-family: "linja-pona", "linjapona", "sitelen pona";
-            font-size: 60px;
-        }
-        .sitelen-image {
-            width: 180px;
-            height: 180px;
-            margin: 10px auto;
-            display: block;
-            border: 1px solid #ddd;
-        }
-        .no-image {
-            color: #999;
-            font-style: italic;
-            margin: 10px auto;
-            text-align: center;
-        }
-    """
-)
+# Create separate models for each card type to ensure unique titles
+CARD_MODELS = {
+    'Word to Sitelen Pona + Definition': genanki.Model(
+        MODEL_ID_BASE + 1,
+        'Toki Pona Word to Sitelen Pona + Definition',
+        fields=[
+            {'name': 'Word'},
+            {'name': 'Definition'},
+            {'name': 'Type'},
+            {'name': 'SitelenPona'},
+            {'name': 'SitelenPonaImage'},
+            {'name': 'UniqueId'}
+        ],
+        templates=[
+            {
+                'name': 'Word to Sitelen Pona + Definition',
+                'qfmt': '{{Word}}',
+                'afmt': '<div class="word">{{Word}}</div><br>'
+                        '<div class="type">{{Type}}</div><br>'
+                        '<div class="definition">{{Definition}}</div><br>'
+                        '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
+                        '{{SitelenPonaImage}}',
+            }
+        ],
+        css="""
+            .card {
+                font-family: arial;
+                font-size: 20px;
+                text-align: center;
+                color: black;
+                background-color: white;
+            }
+            .word {
+                font-size: 28px;
+                font-weight: bold;
+            }
+            .type {
+                font-style: italic;
+                color: #666;
+            }
+            .definition {
+                font-size: 22px;
+            }
+            .sitelen-pona {
+                font-family: "linja-pona", "linjapona", "sitelen pona";
+                font-size: 60px;
+            }
+            .sitelen-image {
+                width: 180px;
+                height: 180px;
+                margin: 10px auto;
+                display: block;
+                border: 1px solid #ddd;
+            }
+            .no-image {
+                color: #999;
+                font-style: italic;
+                margin: 10px auto;
+                text-align: center;
+            }
+        """
+    ),
+    'Definition to Word + Sitelen Pona': genanki.Model(
+        MODEL_ID_BASE + 2,
+        'Toki Pona Definition to Word + Sitelen Pona',
+        fields=[
+            {'name': 'Word'},
+            {'name': 'Definition'},
+            {'name': 'Type'},
+            {'name': 'SitelenPona'},
+            {'name': 'SitelenPonaImage'},
+            {'name': 'UniqueId'}
+        ],
+        templates=[
+            {
+                'name': 'Definition to Word + Sitelen Pona',
+                'qfmt': '<div class="definition">{{Definition}}</div>',
+                'afmt': '<div class="word">{{Word}}</div><br>'
+                        '<div class="type">{{Type}}</div><br>'
+                        '<div class="definition">{{Definition}}</div><br>'
+                        '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
+                        '{{SitelenPonaImage}}',
+            }
+        ],
+        css="""
+            .card {
+                font-family: arial;
+                font-size: 20px;
+                text-align: center;
+                color: black;
+                background-color: white;
+            }
+            .word {
+                font-size: 28px;
+                font-weight: bold;
+            }
+            .type {
+                font-style: italic;
+                color: #666;
+            }
+            .definition {
+                font-size: 22px;
+            }
+            .sitelen-pona {
+                font-family: "linja-pona", "linjapona", "sitelen pona";
+                font-size: 60px;
+            }
+            .sitelen-image {
+                width: 180px;
+                height: 180px;
+                margin: 10px auto;
+                display: block;
+                border: 1px solid #ddd;
+            }
+            .no-image {
+                color: #999;
+                font-style: italic;
+                margin: 10px auto;
+                text-align: center;
+            }
+        """
+    ),
+    'Image to Word + Definition': genanki.Model(
+        MODEL_ID_BASE + 3,
+        'Toki Pona Image to Word + Definition',
+        fields=[
+            {'name': 'Word'},
+            {'name': 'Definition'},
+            {'name': 'Type'},
+            {'name': 'SitelenPona'},
+            {'name': 'SitelenPonaImage'},
+            {'name': 'UniqueId'}
+        ],
+        templates=[
+            {
+                'name': 'Image to Word + Definition',
+                'qfmt': '{{SitelenPonaImage}}',
+                'afmt': '<div class="word">{{Word}}</div><br>'
+                        '<div class="type">{{Type}}</div><br>'
+                        '<div class="definition">{{Definition}}</div><br>'
+                        '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
+                        '{{SitelenPonaImage}}',
+            }
+        ],
+        css="""
+            .card {
+                font-family: arial;
+                font-size: 20px;
+                text-align: center;
+                color: black;
+                background-color: white;
+            }
+            .word {
+                font-size: 28px;
+                font-weight: bold;
+            }
+            .type {
+                font-style: italic;
+                color: #666;
+            }
+            .definition {
+                font-size: 22px;
+            }
+            .sitelen-pona {
+                font-family: "linja-pona", "linjapona", "sitelen pona";
+                font-size: 60px;
+            }
+            .sitelen-image {
+                width: 180px;
+                height: 180px;
+                margin: 10px auto;
+                display: block;
+                border: 1px solid #ddd;
+            }
+            .no-image {
+                color: #999;
+                font-style: italic;
+                margin: 10px auto;
+                text-align: center;
+            }
+        """
+    ),
+    'Word to Definition + Image': genanki.Model(
+        MODEL_ID_BASE + 4,
+        'Toki Pona Word to Definition + Image',
+        fields=[
+            {'name': 'Word'},
+            {'name': 'Definition'},
+            {'name': 'Type'},
+            {'name': 'SitelenPona'},
+            {'name': 'SitelenPonaImage'},
+            {'name': 'UniqueId'}
+        ],
+        templates=[
+            {
+                'name': 'Word to Definition + Image',
+                'qfmt': '<div class="word">{{Word}}</div>',
+                'afmt': '<div class="word">{{Word}}</div><br>'
+                        '<div class="type">{{Type}}</div><br>'
+                        '<div class="definition">{{Definition}}</div><br>'
+                        '<hr><div class="sitelen-pona">{{SitelenPona}}</div>'
+                        '{{SitelenPonaImage}}',
+            }
+        ],
+        css="""
+            .card {
+                font-family: arial;
+                font-size: 20px;
+                text-align: center;
+                color: black;
+                background-color: white;
+            }
+            .word {
+                font-size: 28px;
+                font-weight: bold;
+            }
+            .type {
+                font-style: italic;
+                color: #666;
+            }
+            .definition {
+                font-size: 22px;
+            }
+            .sitelen-pona {
+                font-family: "linja-pona", "linjapona", "sitelen pona";
+                font-size: 60px;
+            }
+            .sitelen-image {
+                width: 180px;
+                height: 180px;
+                margin: 10px auto;
+                display: block;
+                border: 1px solid #ddd;
+            }
+            .no-image {
+                color: #999;
+                font-style: italic;
+                margin: 10px auto;
+                text-align: center;
+            }
+        """
+    )
+}
 
 def load_sitelen_pona_images(words_data):
     """Load pre-generated sitelen pona images for all words."""
@@ -181,12 +337,16 @@ def create_anki_deck():
         else:
             image_html = f'<div class="no-image">No image available for {word}</div>'
         
-        # Create the note with all fields
-        note = genanki.Note(
-            model=TOKI_PONA_MODEL,
-            fields=[word, definition, word_type, word, image_html]
-        )
-        deck.add_note(note)
+        # Create separate notes for each card type to ensure unique titles
+        for card_type, model in CARD_MODELS.items():
+            # Create a unique note for each card type using its specific model
+            # Create unique identifier for this specific card
+            unique_id = f"{word}-{card_type}"
+            note = genanki.Note(
+                model=model,
+                fields=[word, definition, word_type, word, image_html, unique_id]
+            )
+            deck.add_note(note)
     
     # Create the Anki package
     anki_package = genanki.Package(deck)
