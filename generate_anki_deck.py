@@ -175,7 +175,8 @@ def create_anki_deck():
         image_html = ""
         if word in word_to_image:
             image_filename = os.path.basename(word_to_image[word])
-            image_html = f'<div><img src="{image_filename}" alt="{word}" class="sitelen-image" width="180" height="180"></div>'
+            # Use web-compatible img attributes for better AnkiApp support
+            image_html = f'<div><img src="{image_filename}" alt="Sitelen pona for {word}" class="sitelen-image" width="180" height="180" style="max-width: 180px; max-height: 180px; display: block; margin: 0 auto;" loading="lazy"></div>'
             print(f"Using image HTML for '{word}': {image_filename}")
         else:
             image_html = f'<div class="no-image">No image available for {word}</div>'
