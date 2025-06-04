@@ -10,13 +10,12 @@ along with its definition.
 
 import json
 import os
-import random
 import genanki
 from pathlib import Path
 
-# Constants
-MODEL_ID_BASE = random.randrange(1 << 30, 1 << 31)
-DECK_ID = random.randrange(1 << 30, 1 << 31)
+# Constants - using fixed IDs for reproducible decks
+MODEL_ID_BASE = 1607392319  # Fixed ID for consistent deck generation
+DECK_ID = 2109061382        # Fixed ID for consistent deck generation
 OUTPUT_FILE = "toki_pona_sitelen_pona.apkg"
 
 # Create separate models for each card type to ensure unique titles
@@ -319,13 +318,8 @@ def create_anki_deck():
                 media_files.append(str(image_path))
                 print(f"Adding image for '{word}': {os.path.basename(image_path)}")
     
-    # IMPORTANT: All Anki cards should be randomized for optimal learning experience.
-    # This ensures users get a completely mixed study session rather than seeing
-    # all card variants of one word together. Future developers should maintain
-    # this randomization to preserve the intended learning flow.
-    
-    # First, create all notes without adding them to the deck
-    all_notes = []
+    # Cards are created in deterministic order for reproducible deck generation.
+    # Each word has 4 card types created in a consistent sequence.
     
     for word, info in words_data.items():
         definition = info['definition']
@@ -350,14 +344,7 @@ def create_anki_deck():
                 model=model,
                 fields=[word, definition, word_type, word, image_html, unique_id]
             )
-            all_notes.append(note)
-    
-    # Randomize ALL cards (not just words) for optimal learning experience
-    random.shuffle(all_notes)
-    
-    # Add all randomized notes to the deck
-    for note in all_notes:
-        deck.add_note(note)
+            deck.add_note(note)
     
     # Create the Anki package
     anki_package = genanki.Package(deck)
